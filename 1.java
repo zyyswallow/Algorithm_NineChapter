@@ -111,6 +111,136 @@ class Solution {
 => 此时set里面已有[1,2]（2为上一次递归中加入的第一个出现的2），这次递归用if仍可以控制pos=2的那个2，不处理后面的2 
 
 
+4. Permutations
+Given a list of numbers, return all possible permutations.
+http://www.lintcode.com/en/problem/permutations/
+
+class Solution {
+    /**
+     * @param nums: A list of integers.
+     * @return: A list of permutations.
+     */
+    public ArrayList<ArrayList<Integer>> permute(ArrayList<Integer> nums) {
+        // write your code here
+        ArrayList<ArrayList<Integer>> list = new ArrayList<ArrayList<Integer>>();
+        if (nums == null){
+            return list;
+        }
+        ArrayList<Integer> solution = new ArrayList<Integer>();
+        helper(list, solution, nums);
+        return list;
+    }
+    
+    public void helper(ArrayList<ArrayList<Integer>> list, ArrayList<Integer> solution, ArrayList<Integer> nums){
+        if (solution.size() == nums.size()){   // 加入list的条件与subset不同啦
+            list.add(new ArrayList<Integer>(solution));
+            return;
+        }
+        for (int i = 0; i < nums.size(); i++){
+            if (solution.contains(nums.get(i))){   // 用contains()去检查arraylist里面是否存在某个值
+                continue;
+            }
+            solution.add(nums.get(i));
+            helper(list, solution, nums);
+            solution.remove(solution.size() - 1);
+        }
+    }
+}
+
+
+5. Unique Permutations (Permutations II)
+Given a list of numbers with duplicate number in it. Find all unique permutations.
+http://www.lintcode.com/en/problem/permutations-ii/
+
+class Solution {
+    /**
+     * @param nums: A list of integers.
+     * @return: A list of unique permutations.
+     */
+    public ArrayList<ArrayList<Integer>> permuteUnique(ArrayList<Integer> nums) {
+        // write your code here
+        ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
+        if (nums == null || nums.size() == 0){
+            return res;
+        }
+        Collections.sort(nums);
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        int[] visited = new int[nums.size()];   // 用一个visited[] 来继续index对应的数字是否已经选出
+        helper(res, list, nums, visited);
+        return res;
+    }
+    
+    public void helper(ArrayList<ArrayList<Integer>> res, ArrayList<Integer> list, ArrayList<Integer> nums, int[] visited){
+        if (list.size() == nums.size()){
+            res.add(new ArrayList<Integer>(list));
+            return;
+        }
+        for (int i = 0; i < nums.size(); i++){
+            if (visited[i] == 1 || (i != 0 && nums.get(i) == nums.get(i - 1) && visited[i - 1] == 0)){
+                continue;   // 1.这个数已被选出 2.这是一串相同的数，并且i之前的数都还未被选出
+            }
+            list.add(nums.get(i));
+            visited[i] = 1;
+            helper(res, list, nums, visited);
+            list.remove(list.size() - 1);
+            visited[i] = 0;
+        }
+        
+    }
+}
+
+对于[1,2,2,2,3]
+当已选出一个2时，这个2只能是i=1的2，下一次也只能选i=2的那个2，不能是后面的2(visited[i-1]=0)，要按顺序依次选出。
+(i != 0 && nums.get(i) == nums.get(i - 1) && visited[i - 1] == 0)
+按照这个规定，可以保证每个排列不重复。
+
+
+6. Combination Sum
+Given a set of candidate numbers (C) and a target number (T), find all unique combinations in C where the candidate numbers sums to T.
+The same repeated number may be chosen from C unlimited number of times.
+http://www.lintcode.com/en/problem/combination-sum/
+
+public class Solution {
+    /**
+     * @param candidates: A list of integers
+     * @param target:An integer
+     * @return: A list of lists of integers
+     */
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        // write your code here
+        ArrayList<List<Integer>> res = new ArrayList<List<Integer>>();
+        if (candidates == null || candidates.length == 0){
+            return res;
+        }
+        Arrays.sort(candidates);
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        helper(res, list, candidates, 0, target);
+        return res;
+    }
+    
+    public void helper(ArrayList<List<Integer>> res, ArrayList<Integer> list, int[] candidates, int pos, int target){
+        if (target == 0){
+            res.add(new ArrayList<Integer>(list));
+            return;
+        } else if (target < 0){
+            return;
+        }
+        for (int i = pos; i < candidates.length; i++){  // i = pos，保证下一个选的数大于等于当前数 => 答案不重复
+            list.add(candidates[i]);
+            target -= candidates[i];
+            helper(res, list, candidates, i, target);
+            list.remove(list.size() - 1);
+            target += candidates[i];
+        }
+    }
+}
+
+
+7. Letter Combinations of a Phone Number
+Given a digit string, return all possible letter combinations that the number could represent.
+A mapping of digit to letters (just like on the telephone buttons) is given below.
+http://www.lintcode.com/en/problem/letter-combinations-of-a-phone-number/
+
 
 
 
