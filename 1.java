@@ -241,8 +241,130 @@ Given a digit string, return all possible letter combinations that the number co
 A mapping of digit to letters (just like on the telephone buttons) is given below.
 http://www.lintcode.com/en/problem/letter-combinations-of-a-phone-number/
 
+public class Solution {
+    /**
+     * @param digits A digital string
+     * @return all posible letter combinations
+     */
+    public ArrayList<String> letterCombinations(String digits) {
+        // Write your code here
+        String[] letters = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+        ArrayList<String> list = new ArrayList<String>();
+        if (digits == null || digits.length() == 0){
+            return list;
+        }
+        helper(list, "", letters, 0, digits);
+        return list;
+    }
+    
+    public void helper(ArrayList<String> list, String str, String[] letters, int pos, String digits){
+        if (str.length() == digits.length()){
+            list.add(str);
+            return;
+        }
+        int digit = digits.charAt(pos) - '0';
+        for (int i = 0; i < letters[digit].length(); i++){
+            helper(list, str + letters[digit].charAt(i), letters, pos + 1, digits);
+        }
+    }
+}
 
 
+8. Palindrome Partitioning
+Given a string s, partition s such that every substring of the partition is a palindrome.
+Return all possible palindrome partitioning of s.
+http://www.lintcode.com/en/problem/palindrome-partitioning/
+
+public class Solution {
+    /**
+     * @param s: A string
+     * @return: A list of lists of string
+     */
+    public List<List<String>> partition(String s) {
+        // write your code here
+        ArrayList<List<String>> res = new ArrayList<List<String>>();
+        if (s == null || s.length() == 0){
+            return res;
+        }
+        ArrayList<String> list = new ArrayList<String>();
+        helper(res, list, 0, s);
+        return res;
+    }
+    
+    public void helper(ArrayList<List<String>> res, ArrayList<String> list, int pos, String s){
+        if (pos >= s.length()){
+            res.add(new ArrayList<String>(list));
+            return;
+        }
+        for (int i = pos; i < s.length(); i++){
+            String str = s.substring(pos, i + 1);
+            if (isPalindrome(str)){
+                list.add(str);
+                helper(res, list, i + 1, s);
+                list.remove(list.size() - 1);
+            }
+        }
+    }
+    
+    public boolean isPalindrome(String str){
+        if (str == null || str.length() == 0){
+            return false;
+        }
+        int start = 0;
+        int end = str.length() - 1;
+        while (start < end){
+            if (str.charAt(start) != str.charAt(end)){
+                return false;
+            }
+            start++;  // 注意while循环 Time Limit Exceeded
+            end--;
+        }
+        return true;
+    }
+}
+
+此题其实就是对字符串中插入隔板的排列
+
+
+9. Restore IP Addresses
+Given a string containing only digits, restore it by returning all possible valid IP address combinations.
+Example: Given "25525511135", return["255.255.11.135","255.255.111.35"]
+Order does not matter.
+http://www.lintcode.com/en/problem/restore-ip-addresses/
+
+public class Solution {
+    /**
+     * @param s the IP string
+     * @return All possible valid IP addresses
+     */
+    public ArrayList<String> restoreIpAddresses(String s) {
+        // Write your code here
+        ArrayList<String> list = new ArrayList<String>();
+        if (s == null || s.length() < 4 || s.length() > 12){
+            return list;
+        }
+        helper(list, "", 0, s, 4);  // 要记录"."的个数
+        return list;
+    }
+    
+    public void helper(ArrayList<String> list, String address, int pos, String s, int dot){
+        if (pos >= s.length() && dot == 0){
+            list.add(address.substring(0, address.length() - 1));
+            return;
+        }
+        for (int i = pos; i < s.length(); i++){
+            String temp = s.substring(pos, i + 1);
+            if (Integer.parseInt(temp) > 255 || (temp.startsWith("0") && !temp.equals("0"))){
+                break;   // 1.数字不能大于255 2.不能是“010”这种以0开头的数字
+            }
+            address += temp + ".";
+            dot--;
+            helper(list, address, i + 1, s, dot);
+            address = address.substring(0, address.length() - temp.length() - 1);
+            dot++;
+        }
+    }
+}
 
 
 
