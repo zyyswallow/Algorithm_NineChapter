@@ -85,5 +85,59 @@ public class Solution {
 不难，但要细心。
 
 
+3. Partition List
+Given a linked list and a value x, partition it such that all nodes less than x come before nodes greater than or equal to x.
+You should preserve the original relative order of the nodes in each of the two partitions.
+For example, Given 1->4->3->2->5->2->null and x = 3, return 1->2->2->4->3->5->null.
+http://www.lintcode.com/en/problem/partition-list/
+ 
+public class Solution {
+    /**
+     * @param head: The first node of linked list.
+     * @param x: an integer
+     * @return: a ListNode 
+     */
+    public ListNode partition(ListNode head, int x) {
+        // write your code here
+        ListNode leftDummy = new ListNode(0);
+        ListNode left = leftDummy;
+        ListNode rightDummy = new ListNode(0);
+        ListNode right = rightDummy;
+        while (head != null){
+            if (head.val < x){
+                left.next = head;
+                left = left.next;
+                //left.next = null;   不能立即把next置为null
+            } else {
+                right.next = head;
+                right = right.next;
+                //right.next = null;
+            }
+            head = head.next;
+        }
+        left.next = rightDummy.next;
+        right.next = null;   // 要在最后把链表最后置为null
+        return leftDummy.next;
+        
+    }
+}
+
+while循环中，left与right后面链上了原链表，如果立即置为null，会导致原链表也一同置为null。
+
+
+4. Sort List
+Sort a linked list in O(n log n) time using constant space complexity.
+Example: Given 1-3->2->null, sort it to 1->2->3->null.
+http://www.lintcode.com/en/problem/sort-list/
+
+
+
+
+
+
+
+
+
+
 
 
