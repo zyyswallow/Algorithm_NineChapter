@@ -104,8 +104,44 @@ LCA(6, 7) = 7        / \
 
 
 5. Binary Tree Maximum Path Sum
+Given a binary tree, find the maximum path sum.
+The path may start and end at any node in the tree.
 http://www.lintcode.com/en/problem/binary-tree-maximum-path-sum/
 
+public class Solution {
+    public class Result{
+        int rootPath;  // 从根开始的最大路径和，最小值为0.
+        int maxPath;   
+        public Result(int rootPath, int maxPath){
+            this.rootPath = rootPath;
+            this.maxPath = maxPath;
+        }
+    }
+    
+    public int maxPathSum(TreeNode root) {
+        // write your code here
+        return helper(root).maxPath;
+    }
+    
+    public Result helper(TreeNode node){
+        if (node == null){
+            return new Result(0, Integer.MIN_VALUE);
+        }
+        Result left = helper(node.left);
+        Result right = helper(node.right);
+        
+        int rootPath = Math.max(left.rootPath, right.rootPath) + node.val;
+        rootPath = Math.max(0, rootPath);
+        
+        int maxPath = Math.max(left.maxPath, right.maxPath);
+        maxPath = Math.max(maxPath, left.rootPath + right.rootPath + node.val);
+        
+        return new Result(rootPath, maxPath);
+    } 
+}
+
+必须背，一遍一遍记！
+需要一个内部result类，rootPath指从当前node开始的path和，最小值要设置为0！代表path不经过任何点！
 
 
 6. Binary Tree DFS template
@@ -147,10 +183,72 @@ public class Solution {
 Given a binary tree, return the level order traversal of its nodes` values. (ie, from left to right, level by level).
 http://www.lintcode.com/en/problem/binary-tree-level-order-traversal/
 
+public class Solution {
+    public ArrayList<ArrayList<Integer>> levelOrder(TreeNode root) {
+        // write your code here
+        ArrayList list = new ArrayList();
+        Queue<TreeNode> queue = new LinkedList<TreeNode>();   //不能用ArrayList，必须用LinkedList
+        queue.offer(root);
+        while (!queue.isEmpty()){
+            int size = queue.size();
+            ArrayList<Integer> level = new ArrayList<Integer>();
+            for (int i = 0; i < size; i++){
+                TreeNode node = queue.poll();
+                level.add(node.val);
+                if (node.left != null){
+                    queue.offer(node.left);
+                }
+                if (node.right != null){
+                    queue.offer(node.right);
+                }
+            }
+            list.add(level);
+        }
+        return list;
+    }
+}
 
 
+8. Binary Tree Level Order Traversal II
+Given a binary tree, return the bottom-up level order traversal of its nodes` values. 
+(ie, from left to right, level by level from leaf to root).
+http://www.lintcode.com/en/problem/binary-tree-level-order-traversal-ii/
+
+public class Solution {
+    public ArrayList<ArrayList<Integer>> levelOrderBottom(TreeNode root) {
+        // write your code here
+        ArrayList list = new ArrayList();
+        if (root == null){
+            return list;
+        }
+        Queue<TreeNode> queue = new LinkedList<TreeNode>();
+        queue.offer(root);
+        while(!queue.isEmpty()){
+            int size = queue.size();
+            ArrayList<Integer> level = new ArrayList<Integer>();
+            for (int i = 0; i < size; i++){
+                TreeNode node = queue.poll();
+                level.add(node.val);
+                if (node.left != null){
+                    queue.offer(node.left);
+                }
+                if (node.right != null){
+                    queue.offer(node.right);
+                }
+            }
+            list.add(0, level);  //使用了ArrayList的add(index, e)的方法
+        }
+        return list;
+    }
+}
+
+注意ArrayList的这个方法：add(int index, E element) 把element放在index位置，并把其他元素依次右移。效率低。
 
 
+9. Binary Tree Zigzag Level Order Traversal
+Given a binary tree, return the zigzag level order traversal of its nodes` values. 
+(ie, from left to right, then right to left for the next level and alternate between).
+http://www.lintcode.com/en/problem/binary-tree-zigzag-level-order-traversal/
 
 
 
