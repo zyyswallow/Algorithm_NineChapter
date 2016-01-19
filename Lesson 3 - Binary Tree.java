@@ -358,10 +358,98 @@ Given a binary search tree and a new tree node, insert the node into the tree.
 You should keep the tree still be a valid binary search tree.
 http://www.lintcode.com/en/problem/insert-node-in-a-binary-search-tree/
 
+public class Solution {
+    /**
+     * @param root: The root of the binary search tree.
+     * @param node: insert this node into the binary search tree
+     * @return: The root of the new binary search tree.
+     */
+
+    方法一：用递归（简单）
+    public TreeNode insertNode(TreeNode root, TreeNode node) {
+        // write your code here
+        if (root == null){
+            return node;
+        }
+        if (node.val < root.val){
+            root.left = insertNode(root.left, node);  // root.left为Null时会返回node，并赋值给root.left
+        } else if (node.val > root.val){
+            root.right = insertNode(root.right, node);
+        }
+        return root;
+    }
+
+    方法二：不用递归，用循环
+    public TreeNode insertNode(TreeNode root, TreeNode node) {
+        // write your code here
+        if (root == null){
+            return node;
+        }
+        TreeNode tmp = root;
+        while (tmp != null){
+            if (node.val < tmp.val){
+                if (tmp.left == null){
+                    tmp.left = node;
+                    return root;
+                } else {
+                    tmp = tmp.left;
+                }
+            } else if (node.val > tmp.val){
+                if (tmp.right == null){
+                    tmp.right = node;
+                    return root;
+                } else {
+                    tmp = tmp.right;
+                }
+            }
+        }
+        return root;
+    }
+}
+
+
+13. Search Range in Binary Search Tree
+Given two values k1 and k2 (where k1 < k2) and a root pointer to a Binary Search Tree. 
+Find all the keys of tree in range k1 to k2. i.e. print all x such that k1<=x<=k2 and x is a key of given BST. 
+Return all the keys in ascending order.
+http://www.lintcode.com/en/problem/search-range-in-binary-search-tree/
+
+public class Solution {
+    public ArrayList<Integer> searchRange(TreeNode root, int k1, int k2) {
+        // write your code here
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        traverse(list, root, k1, k2);
+        return list;
+    }
+    
+    public void traverse(ArrayList<Integer> list, TreeNode node, int k1, int k2){
+        if (node == null){
+            return;
+        }
+        if (node.val >= k1){   // 先用k1删选一下减少递归次数
+            traverse(list, node.left, k1, k2);
+        }
+        if (node.val >= k1 && node.val <= k2){  // 注意顺序，左中右
+            list.add(node.val);
+        }
+        if (node.val <= k2){
+            traverse(list, node.right, k1, k2);
+        }
+    }
+}
+
+
+14. Binary Search Tree Iterator
+Design an iterator over a binary search tree with the following rules:
+  1.Elements are visited in ascending order (i.e. an in-order traversal)
+  2.next() and hasNext() queries run in O(1) time in average.
+http://www.lintcode.com/en/problem/binary-search-tree-iterator/
 
 
 
 
+15. Remove Node in Binary Search Tree
+http://www.lintcode.com/en/problem/remove-node-in-binary-search-tree/
 
 
 
