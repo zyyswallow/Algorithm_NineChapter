@@ -249,10 +249,114 @@ public class Solution {
 Given a binary tree, return the zigzag level order traversal of its nodes` values. 
 (ie, from left to right, then right to left for the next level and alternate between).
 http://www.lintcode.com/en/problem/binary-tree-zigzag-level-order-traversal/
+ 
+public class Solution {
+    public ArrayList<ArrayList<Integer>> zigzagLevelOrder(TreeNode root) {
+        // write your code here
+        ArrayList list = new ArrayList();
+        if (root == null){
+            return list;
+        }
+        Queue<TreeNode> queue = new LinkedList<TreeNode>();
+        queue.offer(root);
+        boolean forward = true;
+        while(!queue.isEmpty()){
+            int size = queue.size();
+            ArrayList<Integer> level = new ArrayList<Integer>();
+            for (int i = 0; i < size; i++){
+                TreeNode node = queue.poll();
+                if (forward){
+                    level.add(node.val);
+                } else {
+                    level.add(0, node.val);  //如果返回值为List<List<Integer>>，可以用LinkedList和addFirst()
+                }
+                if (node.left != null){
+                    queue.offer(node.left);
+                }
+                if (node.right != null){
+                    queue.offer(node.right);
+                }
+            }
+            list.add(level);  
+            forward = !forward;
+        }
+        return list;
+    }
+}
+就用Queue做，比九章用两个stack做要简单。
 
 
+10. BFS Template
+http://www.jiuzhang.com/solutions/bfs-template/
+
+public class Solution {
+    public ArrayList<ArrayList<Integer>> levelOrder(TreeNode root) {
+        ArrayList result = new ArrayList();
+        
+        if (root == null)
+            return result;
+            
+        Queue<TreeNode> queue = new LinkedList<TreeNode>();
+        queue.offer(root);
+        
+        while (!queue.isEmpty()) {
+            ArrayList<Integer> level = new ArrayList<Integer>();
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                TreeNode head = queue.poll();
+                level.add(head.val);
+                if (head.left != null)
+                    queue.offer(head.left);
+                if (head.right != null)
+                    queue.offer(head.right);
+            }
+            result.add(level);
+        }
+        
+        return result;
+    }
+}
 
 
+11. Validate Binary Search Tree
+Given a binary tree, determine if it is a valid binary search tree (BST).
+Assume a BST is defined as follows:
+  1.The left subtree of a node contains only nodes with keys less than the node`s key.
+  2.The right subtree of a node contains only nodes with keys greater than the node`s key.
+  3.Both the left and right subtrees must also be binary search trees.
+http://www.lintcode.com/en/problem/validate-binary-search-tree/
+
+public class Solution {
+
+    TreeNode pre = null;
+    
+    public boolean isValidBST(TreeNode root) {
+        // write your code here
+        if (root == null){
+            return true;
+        }
+        if (!isValidBST(root.left)){
+            return false;
+        }
+        if (pre != null && pre.val >= root.val){
+            return false;
+        }
+        pre = root;
+        if (!isValidBST(root.right)){
+            return false;
+        }
+        return true;
+    }
+}
+最简单的方法是中序遍历法。但遍历之后用O(n)校对大小顺序，效率低。
+这个是中序遍历的升级版方法，用pre记录当前最后一个节点。比较root.val和pre.val即可。
+注意if条件的顺序依旧要按照中序遍历的顺序。
+
+
+12. Insert Node in a Binary Search Tree
+Given a binary search tree and a new tree node, insert the node into the tree. 
+You should keep the tree still be a valid binary search tree.
+http://www.lintcode.com/en/problem/insert-node-in-a-binary-search-tree/
 
 
 
