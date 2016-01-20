@@ -150,7 +150,82 @@ public class Solution {
 
 
 6. Jump Game
+Given an array of non-negative integers, you are initially positioned at the first index of the array.
+Each element in the array represents your maximum jump length at that position.
+Determine if you are able to reach the last index.
 http://www.lintcode.com/en/problem/jump-game/
+
+public class Solution {
+	方法一：DP O(n^2)
+    public boolean canJump(int[] A) {
+        // wirte your code here
+        if (A == null || A.length == 0){
+            return true;
+        }
+        int len = A.length;
+        boolean[] dp = new boolean[len];
+        dp[0] = true;
+        for (int i = 0; i < len; i++){
+            if (dp[i]){
+               for (int j = i + 1; j < len && j <= i + A[i]; j++){
+                    dp[j] = true;
+                } 
+            }
+        }
+        return dp[len - 1];
+    }
+
+    方法二：贪心法 O(n)
+    public boolean canJump(int[] A) {
+        // wirte your code here
+        if (A == null || A.length == 0){
+            return true;
+        }
+        int len = A.length;
+        int max = 0;
+        for (int i = 0; i < len; i++){
+            if (i <= max){
+                max = Math.max(max, i + A[i]);
+            }
+        }
+        return max >= len - 1;
+    }
+}
+
+
+7. Jump Game II
+Follow up: Your goal is to reach the last index in the minimum number of jumps.
+http://www.lintcode.com/en/problem/jump-game-ii/
+
+public class Solution {
+	方法一：DP
+    public int jump(int[] A) {
+        // write your code here
+        if (A == null || A.length == 0){
+            return 0;
+        }
+        int len = A.length;
+        int[] jumps = new int[len];
+        jumps[0] = 0;
+        for (int i = 0; i < len; i++){
+            if (i == 0 || jumps[i] != 0){
+               for (int j = i + 1; j < len && j <= i + A[i]; j++){
+                   if (jumps[j] == 0){
+                       jumps[j] = jumps[i] + 1;
+                   } else {
+                       jumps[j] = Math.min(jumps[j], jumps[i] + 1);
+                   }
+                } 
+            }
+        }
+        return jumps[len - 1];
+    }
+
+    方法二：贪心法
+    
+}
+
+
 
 
 
