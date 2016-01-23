@@ -132,6 +132,111 @@ http://www.lintcode.com/en/problem/sort-list/
 
 
 
+5. Reorder List
+Given a singly linked list L: L0→L1→…→Ln-1→Ln,
+reorder it to: L0→Ln→L1→Ln-1→L2→Ln-2→…
+You must do this in-place without altering the nodes` values.
+http://www.lintcode.com/en/problem/reorder-list/#
+
+public class Solution {
+    /**
+     * @param head: The head of linked list.
+     * @return: void
+     */
+    public void reorderList(ListNode head) {  
+        // write your code here
+        if (head == null || head.next == null || head.next.next == null){
+            return;
+        }
+        ListNode slow = head;
+        ListNode fast = head.next;
+        while(fast != null && fast.next != null){
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        ListNode right = reverse(slow.next);
+        slow.next = null;
+        merge(head, right);
+    }
+    
+    public ListNode reverse(ListNode node){
+        ListNode prev = null;
+        while (node != null){
+            ListNode next = node.next;
+            node.next = prev;
+            prev = node;
+            node = next;
+        }
+        return prev;
+    }
+    
+    public void merge(ListNode left, ListNode right){
+        while (left.next != null && right != null){   // left.next不为null是为了处理left较短的情况。
+            ListNode temp = left.next;                // 但这里是把right合进left，不需要用right.next。否则会出错。比如，right链表只有一个节点。
+            left.next = right;
+            right = right.next;
+            left.next.next = temp;
+            left = left.next.next;
+        }
+        if (left.next == null){
+            left.next = right;
+        }
+    }
+}
+先找中点，再reverse右半段链表，最后merge。
+九章的做法中，merge方法内用的是dummy node。但我把left作为主段，把right的节点合进left中，写法上简单一些。
+
+
+
+6. Merge k Sorted Lists
+Merge k sorted linked lists and return it as one sorted list.
+http://www.lintcode.com/en/problem/merge-k-sorted-lists/
+
+方法一：两两合并 Divide & Conquer -- O(logn)
+public class Solution {
+    public ListNode mergeKLists(List<ListNode> lists) {  
+        // write your code here
+        if (lists == null || lists.size() == 0){
+            return null;
+        }
+        return mergeHelper(lists, 0, lists.size() - 1);
+    }
+    
+    public ListNode mergeHelper(List<ListNode> lists, int start, int end){
+        if (start >= end){
+            return lists.get(start);
+        }
+        int mid = start + (end - start) / 2;    // 这里不是binary search的方法，是分治法
+        ListNode left = mergeHelper(lists, start, mid);
+        ListNode right = mergeHelper(lists, mid + 1, end);
+        return mergeTwoLists(left, right);
+    }
+    
+    public ListNode mergeTwoLists(ListNode a, ListNode b){
+        ListNode dummy = new ListNode(0);
+        ListNode head = dummy;
+        while (a != null && b != null){
+            if (a.val < b.val){
+                head.next = a;
+                a = a.next;
+            } else {
+                head.next = b;
+                b = b.next;
+            }
+            head = head.next;
+        }
+        if (a == null){
+            head.next = b;
+        } else {
+            head.next = a;
+        }
+        return dummy.next;
+    }
+}
+思想是两两合并，可以用递归分治法合并，也可以用循环来控制合并。但前者更好。
+
+方法二：PriorityQueue O(kn*logk)
+
 
 
 
