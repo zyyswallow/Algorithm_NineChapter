@@ -131,7 +131,6 @@ Example: Given 1-3->2->null, sort it to 1->2->3->null.
 http://www.lintcode.com/en/problem/sort-list/
 
 
-
 5. Reorder List
 Given a singly linked list L: L0→L1→…→Ln-1→Ln,
 reorder it to: L0→Ln→L1→Ln-1→L2→Ln-2→…
@@ -187,7 +186,6 @@ public class Solution {
 九章的做法中，merge方法内用的是dummy node。但我把left作为主段，把right的节点合进left中，写法上简单一些。
 
 
-
 6. Merge k Sorted Lists
 Merge k sorted linked lists and return it as one sorted list.
 http://www.lintcode.com/en/problem/merge-k-sorted-lists/
@@ -236,11 +234,125 @@ public class Solution {
 思想是两两合并，可以用递归分治法合并，也可以用循环来控制合并。但前者更好。
 
 方法二：PriorityQueue O(kn*logk)
+public class Solution {
+    public class ListNodeComparator implements Comparator<ListNode>{   // 要继承Comparator接口（没有小括号）
+        public int compare(ListNode a, ListNode b){
+            if (a != null && b != null){
+                return a.val - b.val;
+            } else if (a == null){
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+    }  
+    
+    public ListNode mergeKLists(List<ListNode> lists) {  
+        // write your code here
+        if (lists == null || lists.size() == 0){
+            return null;
+        }
+        ListNode dummy = new ListNode(0);
+        ListNode head = dummy;
+
+        // 使用最小堆的方法，要申明堆的大小和比较器 
+        Queue<ListNode> heap = new PriorityQueue<ListNode>(lists.size(), new ListNodeComparator());
+        for (int i = 0; i < lists.size(); i++){
+            ListNode node = lists.get(i);
+            if (node != null){    // 要筛掉null的节点！
+                heap.offer(node);
+            }
+        }
+        while (!heap.isEmpty()){
+            ListNode min = heap.poll();
+            head.next = min;
+            head = head.next;
+            if (min.next != null){
+                heap.offer(min.next);
+            }
+        }
+        return dummy.next;
+    }
+}
+
+
+7. Copy List with Random Pointer
+A linked list is given such that each node contains an additional random pointer which could point to any node in the list or null.
+Return a deep copy of the list.
+http://www.lintcode.com/en/problem/copy-list-with-random-pointer/
+
+public class Solution {
+    public RandomListNode copyRandomList(RandomListNode head) {
+        // write your code here
+        if (head == null){
+            return null;
+        }
+        RandomListNode node = head;
+        while (node != null){
+            RandomListNode tmp = node.next;
+            node.next = new RandomListNode(node.label);
+            node.next.next = tmp;
+            node = tmp;
+        }
+        node = head;
+        while (node != null){
+            if (node.random != null){   //不要忘记先判空哦！
+                node.next.random = node.random.next;
+            }
+            node = node.next.next;
+        }
+        RandomListNode dummy = new RandomListNode(0);
+        RandomListNode tail = dummy;
+        node = head;
+        while (node != null){
+            tail.next = node.next;
+            tail = tail.next;
+            node = node.next.next;
+        }
+        return dummy.next;
+    }
+}
+三次循环，先copy节点，再给random赋值，最后把copy的节点分出来。
+也可以把这三步写成三个functions
+
+
+8. Convert Sorted List to Balanced BST
+Given a singly linked list where elements are sorted in ascending order, convert it to a height balanced BST.
+http://www.lintcode.com/en/problem/convert-sorted-list-to-balanced-bst/
 
 
 
 
 
+9. Linked List Cycle
+Given a linked list, determine if it has a cycle in it.
+http://www.lintcode.com/en/problem/linked-list-cycle/
+
+public class Solution {
+    public boolean hasCycle(ListNode head) {  
+        // write your code here
+        if (head == null || head.next == null){
+            return false;
+        }
+        ListNode slow = head;
+        ListNode fast = head.next;
+        while (fast != null && fast.next != null){
+            if (slow == fast){
+                return true;
+            }
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        return false;
+    }
+}
+
+
+10. Reverse Nodes in k-Group
+Given a linked list, reverse the nodes of a linked list k at a time and return its modified list.
+If the number of nodes is not a multiple of k then left-out nodes in the end should remain as it is.
+You may not alter the values in the nodes, only nodes itself may be changed. Only constant memory is allowed.
+http://www.lintcode.com/en/problem/reverse-nodes-in-k-group/
 
 
 
